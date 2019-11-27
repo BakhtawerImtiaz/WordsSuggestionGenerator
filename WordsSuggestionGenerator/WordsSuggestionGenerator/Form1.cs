@@ -110,7 +110,12 @@ namespace WordsSuggestionGenerator
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string testString = textBox1.Text;
+            button3.BackColor = Color.FromArgb(16, 55, 72);
+            button3.ForeColor = Color.White;
+
+            button2.BackColor = Color.FromArgb(245, 186, 66);
+            button2.ForeColor = Color.FromArgb(16, 55, 72);
+            string testString = richTextBox1.Text;
             listofwords = testString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             foreach(string x in listofwords)
             {
@@ -133,7 +138,27 @@ namespace WordsSuggestionGenerator
 
         private void button2_Click(object sender, EventArgs e)
         {
-            dataGridView2.DataSource = listOfWrongWord;
+            button3.BackColor = Color.FromArgb(245, 186, 66);
+            button3.ForeColor = Color.FromArgb(16, 55, 72);
+
+
+            button2.BackColor = Color.FromArgb(16, 55, 72);
+            button2.ForeColor = Color.White;
+
+        }
+
+        private void richTextBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            button2.BackColor = Color.FromArgb(245, 186, 66);
+            button2.ForeColor = Color.FromArgb(16, 55, 72);
+
+            button3.BackColor = Color.FromArgb(16, 55, 72);
+            button3.ForeColor = Color.White;
         }
     }
 }
