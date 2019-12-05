@@ -13,10 +13,11 @@ namespace WordsSuggestionGenerator
 {
     public partial class Form1 : Form
     {
+        int suggestionsReqWord = 0;
         string word = "";
         string preword = "";
         string[] listofwords;
-        List<string> listOfWrongWord = new List<string>();
+        List<Words> listOfWrongWord = new List<Words>();
         List<string> listOfSuggesstions = new List<string>();
        
         private BinaryTree tree = new BinaryTree();
@@ -96,7 +97,7 @@ namespace WordsSuggestionGenerator
             {
                 if(FindNode(tree.Root, wrongword) == "Not Found")
                 {
-                    if(LevenshteinDistance(root.Data, wrongword) <3 && preword!=root.Data)
+                    if(LevenshteinDistance(root.Data, wrongword) <= 3 && preword!=root.Data)
                     {
                         word = word + root.Data + " ";
                     }
@@ -117,31 +118,40 @@ namespace WordsSuggestionGenerator
             button2.ForeColor = Color.FromArgb(16, 55, 72);
             string testString = richTextBox1.Text;
             listofwords = testString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            listOfWrongWord.Clear(); // to reset whole list clearing all previous data
             foreach(string x in listofwords)
             {
                 if(FindNode(tree.Root,x)== "Found")
                 {
-                    MessageBox.Show("Correct Word");
-             
+                    //MessageBox.Show("Correct Word");
                 }
                 else
                 {
-                    MessageBox.Show("Not Found");
-                    wordsuggestioner(tree.Root, x);
-                    listOfWrongWord.Add(x);
-                    listOfSuggesstions.Add(word);
-                    MessageBox.Show(word);
-                    preword = word = "";
+                    // MessageBox.Show("Not Found");
+                    // wordsuggestioner(tree.Root, x);
+                    Words MyWrongWord = new Words();
+                    MyWrongWord.Word = x + "\n";
+                    listOfWrongWord.Add(MyWrongWord);
+                   // listOfSuggesstions.Add(word);
+                   // MessageBox.Show(word);
+                   // preword = word = "";
                 }
             }
+            dataGridView1.DataSource = "";
+            dataGridView1.DataSource = listOfWrongWord;
+
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             button3.BackColor = Color.FromArgb(245, 186, 66);
             button3.ForeColor = Color.FromArgb(16, 55, 72);
-
-
+            wordsuggestioner(tree.Root, listOfWrongWord[suggestionsReqWord].Word);
+            // all suggestions of selected word is in word variable
+            // MessageBox.Show(word);
+            Suggestions newForm = new Suggestions(word);
+            newForm.Show();
+            preword = word = "";
             button2.BackColor = Color.FromArgb(16, 55, 72);
             button2.ForeColor = Color.White;
 
@@ -159,6 +169,39 @@ namespace WordsSuggestionGenerator
 
             button3.BackColor = Color.FromArgb(16, 55, 72);
             button3.ForeColor = Color.White;
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            suggestionsReqWord = e.RowIndex;
+            //dataGridView1.Rows[e.RowIndex].Cells[3].Style.BackColor = Color.Red; 
+            if(e.ColumnIndex==1)
+                dataGridView1.Rows[e.RowIndex].Selected = true;
+
+            //e.Row.DefaultCellStyle.SelectionBackColor = Color.Red;
+        }
+
+        private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            dataGridView1.Rows[e.RowIndex].Cells[0].Value = e.RowIndex + 1;
+        }
+
+        private void richTextBox1_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Text = "";
+
+        }
+
+        private void dataGridView1_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
+        {
+            if(e.StateChanged==DataGridViewElementStates.Selected)
+                e.Row.DefaultCellStyle.SelectionBackColor = Color.FromArgb(245, 186, 66); ;
+    
         }
     }
 }

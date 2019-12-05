@@ -10,11 +10,26 @@ using System.Windows.Forms;
 
 namespace WordsSuggestionGenerator
 {
-    public partial class Form2 : Form
+    public partial class Suggestions : Form
     {
-        public Form2()
+        private string word;
+        public Suggestions()
         {
             InitializeComponent();
+        }
+        public Suggestions(string word)
+        {
+            InitializeComponent();
+            this.word = word;
+        }
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Suggestions_Load(object sender, EventArgs e)
+        {
+            richTextBox1.Text = word;
         }
     }
 }
