@@ -27,10 +27,10 @@ namespace WordsSuggestionGenerator
         }
         private void LoadFunction()
         {
-            string[] readtext = File.ReadAllLines("test.txt");
+            string[] readtext = File.ReadAllLines("words.txt");
             foreach(string x in readtext)
             {
-                tree.Insert(x);
+                tree.insertIterative(x);
             }
         }
         private void Form1_Load(object sender, EventArgs e)

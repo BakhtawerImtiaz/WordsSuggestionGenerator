@@ -13,12 +13,12 @@ namespace WordsSuggestionGenerator
         public Node Right { get; set; }
         public Node()
         {
-
+            this.Data = "";
+            this.Left = null;
         }
         public Node(string data)
         {
             this.Data = data;
-
         }
     }
     public class BinaryTree
@@ -28,6 +28,74 @@ namespace WordsSuggestionGenerator
         {
             Root = null;
         }
+        public void insertIterative(string key)
+        {
+            Node myNewNode = new Node(key);
+            Node curr = this.Root;
+            Node parent = null;
+            if (this.Root == null)
+            {
+                this.Root = myNewNode;
+                return;
+            }
+            while (curr != null)
+            {
+                parent = curr;
+                if (string.Compare(key, curr.Data) < 0)
+                    curr = curr.Left;
+                else
+                    curr = curr.Right;
+            }
+            if (string.Compare(key, parent.Data) < 0)
+            {
+                parent.Left = myNewNode;
+                //parent->left = newNode(key);
+            }
+            else
+            {
+                parent.Right = myNewNode;
+                //parent->right = newNode(key);
+            }
+        }
+        /*
+        public Node myNewNode(string data)
+        {
+            Node temp = new Node();
+
+            temp.Data = data;
+
+            temp.Left = null;
+            temp.Right = null;
+
+            return temp;
+        }
+        public Node Insert(Node root, string data)
+        {
+            Node newnode = myNewNode(data);
+            Node x = root;
+            Node y = null;
+            while (x != null)
+            {
+                y = x;
+                if (string.Compare(data , x.Data)<0)
+                    x = x.Left;
+                else
+                    x = x.Right;
+            } 
+            if (y == null)
+                y = newnode  
+            else if (string.Compare(data , y.Data)<0)
+                y.Left = newnode;
+
+            // else assign the new node its right child  
+            else
+                y.Right = newnode;
+
+            // Returns the pointer where the  
+            // new node is inserted  
+            return y;
+        }
+        /*
         public void Insert(string data)
         {
             if (Root == null)
@@ -57,7 +125,7 @@ namespace WordsSuggestionGenerator
                 else
                     InsertRecursive(root.Right, newNode);
             }
-        }
+        }*/
     }
-    
+
 }
