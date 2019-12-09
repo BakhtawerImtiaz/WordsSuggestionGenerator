@@ -19,7 +19,7 @@ namespace WordsSuggestionGenerator
         string[] listofwords;
         List<Words> listOfWrongWord = new List<Words>();
         List<string> listOfSuggesstions = new List<string>();
-       
+
         private BinaryTree tree = new BinaryTree();
         public Form1()
         {
@@ -28,7 +28,7 @@ namespace WordsSuggestionGenerator
         private void LoadFunction()
         {
             string[] readtext = File.ReadAllLines("words.txt");
-            foreach(string x in readtext)
+            foreach (string x in readtext)
             {
                 tree.insertIterative(x);
             }
@@ -43,17 +43,38 @@ namespace WordsSuggestionGenerator
 
         }
 
-
-        public string FindNode(Node node, string s)
+        public string FindMyNodeIter(string key)
         {
-            if (node == null)
-                return "Not Found";
-            else if (s.CompareTo(node.Data) < 0)
-                return FindNode(node.Left, s);
-            else if (s.CompareTo(node.Data) > 0)
-                return FindNode(node.Right, s);
-
-            return "Found";
+            Node curr = tree.Root;
+            Node parent = null;
+            while (curr != null)
+            {
+                parent = curr;
+                if (string.Compare(key, curr.Data) == 0)
+                    return "Found";
+                if (string.Compare(key, curr.Data) < 0)
+                    curr = curr.Left;
+                else
+                    curr = curr.Right;
+            }
+            return "Not Found";
+        }
+        public void ProvideSuggestions(string key)
+        {
+            Node curr = tree.Root;
+            Node parent = null;
+            while (curr != null)
+            {
+                parent = curr;
+                if (LevenshteinDistance(curr.Data, key) <= 3)
+                {
+                    word = word + curr.Data + " ";
+                }
+                if (string.Compare(key, curr.Data) < 0)
+                    curr = curr.Left;
+                else
+                    curr = curr.Right;
+            }
         }
         public static int LevenshteinDistance(string s, string t)
         {
@@ -88,27 +109,6 @@ namespace WordsSuggestionGenerator
             }
             return d[n, m];
         }
-        void wordsuggestioner(Node root,string wrongword)
-        {
-            //word = preword = "";
-            if (root == null)
-                return;
-           else
-            {
-                if(FindNode(tree.Root, wrongword) == "Not Found")
-                {
-                    if(LevenshteinDistance(root.Data, wrongword) <= 3 && preword!=root.Data)
-                    {
-                        word = word + root.Data + " ";
-                    }
-                    preword = root.Data;
-                }
-                wordsuggestioner(root.Left, wrongword);
-                wordsuggestioner(root.Right, wrongword);
-            }
-        }
-
-
         private void button1_Click(object sender, EventArgs e)
         {
             button3.BackColor = Color.FromArgb(16, 55, 72);
@@ -119,23 +119,11 @@ namespace WordsSuggestionGenerator
             string testString = richTextBox1.Text;
             listofwords = testString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             listOfWrongWord.Clear(); // to reset whole list clearing all previous data
-            foreach(string x in listofwords)
+            foreach (string x in listofwords)
             {
-                if(FindNode(tree.Root,x)== "Found")
-                {
-                    //MessageBox.Show("Correct Word");
-                }
-                else
-                {
-                    // MessageBox.Show("Not Found");
-                    // wordsuggestioner(tree.Root, x);
-                    Words MyWrongWord = new Words();
-                    MyWrongWord.Word = x + "\n";
-                    listOfWrongWord.Add(MyWrongWord);
-                   // listOfSuggesstions.Add(word);
-                   // MessageBox.Show(word);
-                   // preword = word = "";
-                }
+                Words MyWrongWord = new Words();
+                MyWrongWord.Word = x + "\n";
+                listOfWrongWord.Add(MyWrongWord);
             }
             dataGridView1.DataSource = "";
             dataGridView1.DataSource = listOfWrongWord;
@@ -146,9 +134,7 @@ namespace WordsSuggestionGenerator
         {
             button3.BackColor = Color.FromArgb(245, 186, 66);
             button3.ForeColor = Color.FromArgb(16, 55, 72);
-            wordsuggestioner(tree.Root, listOfWrongWord[suggestionsReqWord].Word);
-            // all suggestions of selected word is in word variable
-            // MessageBox.Show(word);
+            ProvideSuggestions(listOfWrongWord[suggestionsReqWord].Word);
             Suggestions newForm = new Suggestions(word);
             newForm.Show();
             preword = word = "";
@@ -166,7 +152,6 @@ namespace WordsSuggestionGenerator
         {
             button2.BackColor = Color.FromArgb(245, 186, 66);
             button2.ForeColor = Color.FromArgb(16, 55, 72);
-
             button3.BackColor = Color.FromArgb(16, 55, 72);
             button3.ForeColor = Color.White;
         }
@@ -180,9 +165,8 @@ namespace WordsSuggestionGenerator
         {
             suggestionsReqWord = e.RowIndex;
             //dataGridView1.Rows[e.RowIndex].Cells[3].Style.BackColor = Color.Red; 
-            if(e.ColumnIndex==1)
+            if (e.ColumnIndex == 1)
                 dataGridView1.Rows[e.RowIndex].Selected = true;
-
             //e.Row.DefaultCellStyle.SelectionBackColor = Color.Red;
         }
 
@@ -199,9 +183,14 @@ namespace WordsSuggestionGenerator
 
         private void dataGridView1_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
         {
-            if(e.StateChanged==DataGridViewElementStates.Selected)
+            if (e.StateChanged == DataGridViewElementStates.Selected)
                 e.Row.DefaultCellStyle.SelectionBackColor = Color.FromArgb(245, 186, 66); ;
-    
+
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
